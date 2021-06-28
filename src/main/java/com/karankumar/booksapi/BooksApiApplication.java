@@ -29,6 +29,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.util.Collections;
 import java.util.Set;
 
 @SpringBootApplication
@@ -44,12 +45,21 @@ public class BooksApiApplication {
         return args -> {
             Publisher publisher = new Publisher("Bloomsbury");
 
+            Author author = new Author("J.K. Rowling", Collections.emptySet());
+            author.setAbout("A fantastic author");
+            author = authorRepository.save(author);
+
+            Author author2 = new Author("J.R.R. Tolkien", Collections.emptySet());
+            author2.setAbout("Another fantastic author");
+            author2 = authorRepository.save(author2);
+
             Book book1 = createBook(
                     "Harry Potter and the Philosopher's stone",
                     "Philosopher's stone blurb",
                     1997,
                     "9781408810545"
             );
+            book1.setAuthors(Set.of(author));
             bookRepository.save(book1);
             publisher.addBook(book1);
 
@@ -59,6 +69,7 @@ public class BooksApiApplication {
                     1998,
                     "1234567898765"
             );
+            book2.setAuthors(Set.of(author));
             bookRepository.save(book2);
 
             Book book3 = createBook(
@@ -67,14 +78,8 @@ public class BooksApiApplication {
                     1937,
                     "1234567898761"
             );
+            book3.setAuthors(Set.of(author2));
             bookRepository.save(book3);
-            Author author2 = new Author("J.R.R. Tolkien", Set.of(book3));
-            author2.setAbout("Another fantastic author");
-            authorRepository.save(author2);
-
-            Author author = new Author("J.K. Rowling", Set.of(book1, book2, book3));
-            author.setAbout("A fantastic author");
-            authorRepository.save(author);
 
             publisherRepository.save(publisher);
         };
